@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Trading Dashboard — จันทร์ 6 ก.ค. 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0C1017;
+  --panel:#131A24;
+  --panel2:#1A2330;
+  --line:#232E3D;
+  --text:#E8EDF4;
+  --dim:#8A97A8;
+  --faint:#5A6678;
+  --green:#3DDC97;
+  --red:#FF6B6B;
+  --amber:#FFC24B;
+  --blue:#5BA8FF;
+  --mono:'IBM Plex Mono',monospace;
+  --sans:'IBM Plex Sans Thai',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;line-height:1.5;padding:20px;max-width:1180px;margin:0 auto}
+::selection{background:#2A3A50}
+
+/* ── TOP BAR ── */
+.top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:18px}
+.top-date{font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase}
+.top-title{font-size:24px;font-weight:700;letter-spacing:-.01em;margin:2px 0}
+.top-sub{font-size:12px;color:var(--dim)}
+.mode-pills{display:flex;gap:6px;flex-wrap:wrap;padding-top:6px}
+.pill{font-family:var(--mono);font-size:10px;font-weight:500;padding:4px 10px;border-radius:4px;border:1px solid var(--line);letter-spacing:.04em}
+.pill-red{color:var(--red);border-color:rgba(255,107,107,.35);background:rgba(255,107,107,.07)}
+.pill-grn{color:var(--green);border-color:rgba(61,220,151,.35);background:rgba(61,220,151,.07)}
+.pill-amb{color:var(--amber);border-color:rgba(255,194,75,.35);background:rgba(255,194,75,.07)}
+.pill-dim{color:var(--dim)}
+
+/* ── SESSION TIMELINE (signature) ── */
+.timeline{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px 20px;margin-bottom:16px}
+.tl-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px}
+.tl-title{font-size:11px;font-weight:600;color:var(--dim);letter-spacing:.1em;text-transform:uppercase}
+.tl-note{font-family:var(--mono);font-size:10px;color:var(--faint)}
+.tl-track{position:relative;height:56px}
+.tl-axis{position:absolute;left:0;right:0;top:34px;height:2px;background:var(--line)}
+.tl-session{position:absolute;top:26px;height:18px;border-radius:3px;opacity:.85}
+.tl-session span{position:absolute;top:-16px;left:4px;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.06em}
+.s-asian{left:0%;width:37.5%;background:linear-gradient(90deg,#1E3A5C,#234A75)}
+.s-london{left:29%;width:33%;background:linear-gradient(90deg,#3A2E5C,#4A3B75);top:8px}
+.s-ny{left:52%;width:35.5%;background:linear-gradient(90deg,#5C2E3A,#753B4A)}
+.tl-hours{display:flex;justify-content:space-between;margin-top:24px}
+.tl-hours b{font-family:var(--mono);font-size:9px;color:var(--faint);font-weight:400}
+.tl-event{position:absolute;top:16px;width:2px;height:26px;background:var(--amber)}
+.tl-event::after{content:attr(data-label);position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:9px;color:var(--amber);white-space:nowrap}
+.tl-event.ev-none{background:var(--faint)}
+.tl-event.ev-none::after{color:var(--faint)}
+
+/* ── SECTION LABEL ── */
+.sec{font-size:11px;font-weight:600;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin:20px 0 10px;display:flex;align-items:center;gap:8px}
+.sec::after{content:'';flex:1;height:1px;background:var(--line)}
+
+/* ── SNAPSHOT STRIP ── */
+.snap{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:760px){.snap{grid-template-columns:repeat(2,1fr)}}
+.snap-item{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+.sn-label{font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.06em;margin-bottom:4px}
+.sn-val{font-family:var(--mono);font-size:20px;font-weight:600;letter-spacing:-.01em}
+.sn-note{font-size:11px;margin-top:3px;color:var(--dim)}
+.c-up{color:var(--green)}.c-dn{color:var(--red)}.c-fl{color:var(--amber)}
+
+/* ── PAIR BOARD ── */
+.board{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:920px){.board{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.board{grid-template-columns:1fr}}
+.pair{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 15px;position:relative;overflow:hidden}
+.pair::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px}
+.pair.bias-bull::before{background:var(--green)}
+.pair.bias-bear::before{background:var(--red)}
+.pair.bias-wait::before{background:var(--amber)}
+.p-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.p-name{font-family:var(--mono);font-size:14px;font-weight:600;letter-spacing:.02em}
+.p-bias{font-family:var(--mono);font-size:10px;font-weight:600;padding:2px 8px;border-radius:3px;letter-spacing:.05em}
+.b-bull{color:var(--green);background:rgba(61,220,151,.1)}
+.b-bear{color:var(--red);background:rgba(255,107,107,.1)}
+.b-wait{color:var(--amber);background:rgba(255,194,75,.1)}
+.p-price{font-family:var(--mono);font-size:17px;font-weight:600;margin-bottom:8px}
+.p-price small{font-size:11px;font-weight:400;color:var(--dim);margin-left:6px}
+.p-sr{display:flex;gap:0;font-family:var(--mono);font-size:10px;margin-bottom:9px;border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.p-sr div{flex:1;padding:5px 8px;text-align:center}
+.p-sr .sr-s{background:rgba(61,220,151,.06);color:var(--green)}
+.p-sr .sr-r{background:rgba(255,107,107,.06);color:var(--red)}
+.p-sr b{display:block;font-size:9px;font-weight:400;color:var(--faint);letter-spacing:.08em}
+.p-plan{font-size:12px;color:var(--text);line-height:1.55}
+.p-plan strong{font-weight:600;color:#fff}
+.p-warn{font-size:11px;color:var(--dim);margin-top:6px;padding-top:6px;border-top:1px dashed var(--line)}
+.p-warn em{color:var(--amber);font-style:normal;font-weight:500}
+
+/* ── TWO-COL: CALENDAR + RULES ── */
+.duo{display:grid;grid-template-columns:1.5fr 1fr;gap:10px}
+@media(max-width:820px){.duo{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.cal-row{display:grid;grid-template-columns:64px 34px 1fr 92px;gap:8px;padding:7px 0;border-top:1px solid var(--line);align-items:baseline}
+.cal-row:first-of-type{border-top:none}
+.cal-day{font-family:var(--mono);font-size:11px;color:var(--dim)}
+.cal-ccy{font-family:var(--mono);font-size:10px;color:var(--faint)}
+.cal-ev{font-size:12px;font-weight:500}
+.cal-ev small{display:block;font-weight:400;font-size:10.5px;color:var(--dim);margin-top:1px}
+.cal-fc{font-family:var(--mono);font-size:10px;color:var(--dim);text-align:right}
+.tag-hot{display:inline-block;font-family:var(--mono);font-size:9px;color:var(--red);border:1px solid rgba(255,107,107,.4);border-radius:3px;padding:0 4px;margin-left:5px;vertical-align:1px}
+.rule{display:flex;gap:9px;padding:6px 0;border-top:1px solid var(--line);font-size:12px;align-items:baseline}
+.rule:first-of-type{border-top:none}
+.rule-check{font-family:var(--mono);color:var(--green);font-size:11px;flex-shrink:0}
+.rule b{font-weight:600}
+.rule .mono{font-family:var(--mono);font-size:11px;color:var(--amber)}
+
+/* ── NARRATIVE ── */
+.narr{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px;font-size:13px;line-height:1.7}
+.narr strong{color:#fff;font-weight:600}
+.narr .hl-g{color:var(--green)}.narr .hl-r{color:var(--red)}.narr .hl-a{color:var(--amber)}
+
+.foot{margin-top:20px;padding-top:12px;border-top:1px solid var(--line);font-size:10.5px;color:var(--faint);line-height:1.7;font-family:var(--mono)}
+@media (prefers-reduced-motion: no-preference){
+  .pair{transition:border-color .15s}
+  .pair:hover{border-color:#314054}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP -->
+<div class="top">
+  <div>
+    <div class="top-date">Monday · 06 Jul 2026 · 08:30 ICT</div>
+    <div class="top-title">Daily Trading Dashboard</div>
+    <div class="top-sub">อ่านจบ วางแผนได้ ภายใน 5–10 นาที · เวลาทั้งหมดเป็น ICT (UTC+7)</div>
+  </div>
+  <div class="mode-pills">
+    <span class="pill pill-red">FED HAWKISH · HIKE ODDS LIVE</span>
+    <span class="pill pill-amb">FOMC MINUTES พ. 8 ก.ค.</span>
+    <span class="pill pill-grn">NFP MISS → USD ย่อ</span>
+    <span class="pill pill-dim">DXY ~100.95</span>
+  </div>
+</div>
+
+<!-- SESSION TIMELINE -->
+<div class="timeline">
+  <div class="tl-head">
+    <div class="tl-title">Session Map วันนี้</div>
+    <div class="tl-note">ASIAN 07:00–16:00 · LONDON 14:00–22:00 · NY 19:30–04:00</div>
+  </div>
+  <div class="tl-track">
+    <div class="tl-session s-asian"><span>ASIAN</span></div>
+    <div class="tl-session s-london"><span>LONDON</span></div>
+    <div class="tl-session s-ny"><span>NY</span></div>
+    <div class="tl-axis"></div>
+    <!-- events: % of 07:00→04:00 (21h) -->
+    <div class="tl-event ev-none" style="left:20%" data-label="ไม่มีข่าวเช้า"></div>
+    <div class="tl-event" style="left:71%" data-label="ISM Svc PMI 21:00"></div>
+  </div>
+  <div class="tl-hours">
+    <b>07:00</b><b>10:00</b><b>13:00</b><b>16:00</b><b>19:00</b><b>22:00</b><b>01:00</b><b>04:00</b>
+  </div>
+</div>
+
+<!-- SNAPSHOT -->
+<div class="sec">Market Snapshot</div>
+<div class="snap">
+  <div class="snap-item">
+    <div class="sn-label">DXY</div>
+    <div class="sn-val">100.95</div>
+    <div class="sn-note c-dn">▾ −0.40% สัปดาห์ก่อน · NFP miss กด</div>
+  </div>
+  <div class="snap-item">
+    <div class="sn-label">XAU/USD</div>
+    <div class="sn-val">~4,149</div>
+    <div class="sn-note c-up">▴ +1.47% · ฟื้นจาก NFP miss</div>
+  </div>
+  <div class="snap-item">
+    <div class="sn-label">FED — JULY 29</div>
+    <div class="sn-val">HOLD 69%</div>
+    <div class="sn-note c-fl">◆ Hike odds ก.ย. ~60%+</div>
+  </div>
+  <div class="snap-item">
+    <div class="sn-label">VIX</div>
+    <div class="sn-val">16.14</div>
+    <div class="sn-note c-up">▾ จาก 18.40 · ตลาด calm</div>
+  </div>
+</div>
+
+<!-- NARRATIVE -->
+<div class="sec">Big Picture — 30 วินาที</div>
+<div class="narr">
+  <strong>NFP มิ.ย. ออก 57K</strong> (คาด ~172K) — miss หนัก ทำให้ <span class="hl-g">USD ย่อ · Gold ฟื้น</span> ปิดสัปดาห์
+  แต่ Fed ยัง <span class="hl-r">hawkish เต็มตัว</span>: dot plot มิ.ย. ชี้ 1 hike ปีนี้ และตลาดยังให้ hike ก.ย. เกิน 60%
+  → สัปดาห์นี้เป็นการชนกันระหว่าง <strong>"ตลาดแรงงานอ่อน"</strong> vs <strong>"Fed อยากขึ้น rate"</strong>
+  ตัวตัดสินคือ <span class="hl-a">FOMC Minutes พ. 8 ก.ค.</span> — ถ้าน้ำเสียง hawkish ยืนยัน → USD กลับแข็ง · ถ้าลังเล → USD ย่อต่อ Gold ขึ้นต่อ
+  วันนี้ (จ.) ไม่มีข่าวเช้า ตลาดเพิ่งกลับจากหยุดยาว <span class="hl-a">liquidity ต่ำช่วง Asian — อย่า force entry</span>
+</div>
+
+<!-- PAIR BOARD -->
+<div class="sec">Pair Board — Bias · S/R · Plan</div>
+<div class="board">
+
+  <div class="pair bias-wait">
+    <div class="p-head"><span class="p-name">XAUUSD</span><span class="p-bias b-wait">WAIT→BUY</span></div>
+    <div class="p-price">~4,149 <small>ฟื้นจาก 4,066</small></div>
+    <div class="p-sr">
+      <div class="sr-s"><b>S</b>4,066 / 4,030</div>
+      <div class="sr-r"><b>R</b>4,236 / 4,320</div>
+    </div>
+    <div class="p-plan">รอ pullback <strong>4,090–4,110</strong> แล้วดู bounce · ถ้า hold ได้ Buy TP1 4,236 · momentum ฟื้นหลัง NFP miss</div>
+    <div class="p-warn"><em>ระวัง:</em> Minutes พ. hawkish = Gold ร่วงกลับ · อย่าถือ size ใหญ่ข้าม พ.</div>
+  </div>
+
+  <div class="pair bias-bear">
+    <div class="p-head"><span class="p-name">EURUSD</span><span class="p-bias b-bear">BEAR-LEAN</span></div>
+    <div class="p-price">~1.1580 <small>ใต้ 200-day MA</small></div>
+    <div class="p-sr">
+      <div class="sr-s"><b>S</b>1.1512 / 1.1483</div>
+      <div class="sr-r"><b>R</b>1.1598 / 1.1660</div>
+    </div>
+    <div class="p-plan">Sell rally <strong>1.1590–1.1598</strong> ถ้า reject ชัด · TP 1.1512 · breakout เหนือ 1.1598 = เปลี่ยนแผนเป็น Buy หา 1.1660</div>
+    <div class="p-warn"><em>ระวัง:</em> 1.1598 คือ decision point — อย่า Sell ถ้า break แล้ว</div>
+  </div>
+
+  <div class="pair bias-bear">
+    <div class="p-head"><span class="p-name">GBPUSD</span><span class="p-bias b-bear">BEARISH</span></div>
+    <div class="p-price">~1.3430 <small>political drag</small></div>
+    <div class="p-sr">
+      <div class="sr-s"><b>S</b>1.3330 / 1.3250</div>
+      <div class="sr-r"><b>R</b>1.3490 / 1.3577</div>
+    </div>
+    <div class="p-plan">Sell rally <strong>1.3480–1.3490</strong> · TP1 1.3330 · Starmer pressure ยังไม่จบ ไม่มี UK catalyst สัปดาห์นี้</div>
+    <div class="p-warn"><em>ระวัง:</em> ถ้า USD อ่อนแรงจาก Minutes dovish → GBP short จะโดน squeeze</div>
+  </div>
+
+  <div class="pair bias-wait">
+    <div class="p-head"><span class="p-name">AUDUSD</span><span class="p-bias b-wait">WAIT</span></div>
+    <div class="p-price">~0.7140 <small>รอ China CPI พฤ.</small></div>
+    <div class="p-sr">
+      <div class="sr-s"><b>S</b>0.7080 / 0.7050</div>
+      <div class="sr-r"><b>R</b>0.7200 / 0.7227</div>
+    </div>
+    <div class="p-plan">ยังไม่มี edge วันนี้ · <strong>China CPI พฤ. 9</strong> คือ catalyst · ถ้าออกดี + USD อ่อน = Buy dip 0.7080–0.7100</div>
+    <div class="p-warn"><em>ระวัง:</em> RBNZ พ. 8 อาจลาก AUD ผ่าน AUDNZD cross ได้</div>
+  </div>
+
+  <div class="pair bias-bull">
+    <div class="p-head"><span class="p-name">USDCAD</span><span class="p-bias b-bull">BULL-LEAN</span></div>
+    <div class="p-price">~1.3980 <small>เหนือ 1.3950</small></div>
+    <div class="p-sr">
+      <div class="sr-s"><b>S</b>1.3950 / 1.3900</div>
+      <div class="sr-r"><b>R</b>1.4050 / 1.4120</div>
+    </div>
+    <div class="p-plan">Buy dip <strong>1.3950–1.3965</strong> ถ้า hold · TP1 1.4050 · Oil อ่อนตัว (risk premium bleed) หนุน USDCAD</div>
+    <div class="p-warn"><em>ระวัง:</em> Canada jobs ศ. 10 · ถ้า Oil spike จาก Iran = ออกทันที</div>
+  </div>
+
+  <div class="pair bias-bull">
+    <div class="p-head"><span class="p-name">USDCHF</span><span class="p-bias b-bull">BULL-LEAN</span></div>
+    <div class="p-price">~0.7960 <small>ใต้ 0.8000</small></div>
+    <div class="p-sr">
+      <div class="sr-s"><b>S</b>0.7900 / 0.7870</div>
+      <div class="sr-r"><b>R</b>0.8000 / 0.8050</div>
+    </div>
+    <div class="p-plan">Buy dip <strong>0.7900–0.7920</strong> · TP 0.7990 · break 0.8000 ต้องรอ Minutes hawkish confirm</div>
+    <div class="p-warn"><em>ระวัง:</em> 0.8000 คือ psychological wall — เคย reject มาแล้ว</div>
+  </div>
+
+</div>
+
+<!-- CALENDAR + RULES -->
+<div class="sec">Calendar สัปดาห์นี้ + Risk Rules</div>
+<div class="duo">
+  <div class="panel">
+    <div class="cal-row">
+      <span class="cal-day">จ. 6</span><span class="cal-ccy">USD</span>
+      <span class="cal-ev">ISM Services PMI มิ.ย. <small>21:00 ICT · วัด services sector หลัง NFP miss</small></span>
+      <span class="cal-fc">Prev 54.5</span>
+    </div>
+    <div class="cal-row">
+      <span class="cal-day">อ. 7</span><span class="cal-ccy">USD</span>
+      <span class="cal-ev">ADP Employment <small>19:15 ICT · preview ตลาดแรงงาน</small></span>
+      <span class="cal-fc">—</span>
+    </div>
+    <div class="cal-row">
+      <span class="cal-day">พ. 8</span><span class="cal-ccy">USD</span>
+      <span class="cal-ev">FOMC Minutes<span class="tag-hot">HOT</span> <small>01:00 ICT (คืน พ.→พฤ.) · เบื้องหลัง hawkish pivot</small></span>
+      <span class="cal-fc">Event หลัก</span>
+    </div>
+    <div class="cal-row">
+      <span class="cal-day">พ. 8</span><span class="cal-ccy">NZD</span>
+      <span class="cal-ev">RBNZ Rate Decision <small>09:00 ICT · ตลาด price hike ~80% → กระทบ AUD cross</small></span>
+      <span class="cal-fc">2.25%→2.50%?</span>
+    </div>
+    <div class="cal-row">
+      <span class="cal-day">พฤ. 9</span><span class="cal-ccy">CNY</span>
+      <span class="cal-ev">China CPI มิ.ย. <small>11:30 ICT · catalyst หลักของ AUD</small></span>
+      <span class="cal-fc">Est ~1.2%</span>
+    </div>
+    <div class="cal-row">
+      <span class="cal-day">ศ. 10</span><span class="cal-ccy">CAD</span>
+      <span class="cal-ev">Canada Employment มิ.ย. <small>19:30 ICT · กระทบ USDCAD ปิดสัปดาห์</small></span>
+      <span class="cal-fc">—</span>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="rule"><span class="rule-check">[01]</span><span><b>Max 2 positions</b> ต่อวัน · risk ≤ 1%/trade</span></div>
+    <div class="rule"><span class="rule-check">[02]</span><span>จันทร์หลังหยุดยาว: <span class="mono">รอ 30 นาทีแรก</span> ห้ามเทรดตอน spread กว้าง</span></div>
+    <div class="rule"><span class="rule-check">[03]</span><span>No-trade zone: <span class="mono">Minutes 00:45–01:30</span> (คืน พ.)</span></div>
+    <div class="rule"><span class="rule-check">[04]</span><span>SL ทุก position → <b>BE ก่อน 00:00 คืน พ.</b></span></div>
+    <div class="rule"><span class="rule-check">[05]</span><span>Priority setup: <b>USDCAD · USDCHF</b> (buy dip)</span></div>
+    <div class="rule"><span class="rule-check">[06]</span><span>Skip วันนี้: <b>AUDUSD</b> — รอ China CPI พฤ.</span></div>
+    <div class="rule"><span class="rule-check">[07]</span><span>Wildcard: Iran headline → Oil spike → <span class="mono">re-check ทุก bias</span></span></div>
+  </div>
+</div>
+
+<div class="foot">
+  DATA: BABYPIPS · IG · LITEFINANCE · AULIVO · FOREXFACTORY · CME FEDWATCH — PRICES AS OF FRI 3 JUL CLOSE, MARKET REOPENS MON 6 JUL<br>
+  MORNING BRIEF · ASIAN RECAP 13:30 · LONDON/NY RECAP 01:00 — ไม่ใช่คำแนะนำการลงทุน · TRADE AT YOUR OWN RISK
+</div>
+
+</body>
+</html>
